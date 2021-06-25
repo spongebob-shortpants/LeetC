@@ -45,7 +45,47 @@ class Solution {
     }
 }
 
-//450. Delete Node in a BST 
+//450. Delete Node in a BST 100%
+class Solution {
+    public TreeNode deleteNode(TreeNode root, int key) {
+        TreeNode node=root;
+        TreeNode parent=null;
+        while(node!=null && node.val!=key){
+            parent=node;
+            if(node.val>key){
+                node=node.left;   
+            }
+            else{
+                node=node.right;
+            }
+        }
+        if(parent == null) return delete(node);
+		if(parent.left == node){
+            parent.left = delete(node);
+        }else{
+            parent.right = delete(node);
+        }
+        return root;    
+    }
+    private TreeNode delete(TreeNode node){
+        if(node == null) return null;
+        if(node.left == null) return node.right;
+        if(node.right == null) return node.left;
+        TreeNode successor = node.right;
+        TreeNode parent = null;
+        while(successor.left != null){
+            parent = successor;
+            successor = successor.left;
+        }
+        successor.left = node.left; 
+        if (successor != node.right){
+            parent.left = successor.right;
+            successor.right = node.right;
+        }
+        return successor;
+    }
+}
+
 
 
 //98. Validate Binary Search Tree 31.98%
@@ -149,5 +189,89 @@ class Solution {
             }
         }
         return root;
+    }
+}
+
+
+//230. Kth Smallest Element in a BST 100%
+class Solution {
+    public int kthSmallest(TreeNode root, int k) {
+        Stack<TreeNode> stack= new Stack<>();
+        while(!stack.isEmpty()||root!=null||k==0){
+            if(root!=null){
+                stack.push(root);
+                root=root.left;
+            }else{
+                TreeNode node=stack.pop();
+                k--;
+                if(k==0) return node.val;
+                root=node.right;
+            }
+        }
+        return 0;  
+    }
+}
+
+
+//173. Binary Search Tree Iterator 73.06%
+class BSTIterator {
+    Stack<TreeNode> stack=new Stack<>();
+
+    public BSTIterator(TreeNode root) {
+        TreeNode cur=root;
+        while(cur!= null){
+            stack.push(cur);
+            cur= cur.left;
+        } 
+    }
+    
+    public int next() {
+        TreeNode node = stack.pop();
+        TreeNode temp = node.right;
+        while(temp != null){
+            stack.push(temp);
+            temp = temp.left;
+        }
+        return node.val;
+    }
+    
+    public boolean hasNext() {
+       return !stack.isEmpty(); 
+    }
+}
+
+
+
+
+
+//99. Recover Binary Search Tree 39.75% 中序遍历
+class Solution {
+    public void recoverTree(TreeNode root) {
+        TreeNode temp = null;
+        TreeNode first = null;
+        TreeNode second = null;
+        // template binary tree inorder traversal iteratively
+        Stack<TreeNode> stack = new Stack<>();
+        while (root != null || !stack.isEmpty()) {
+            if (root != null) {
+                stack.push(root);
+                root=root.left;
+            }else{
+                TreeNode node = stack.pop();
+                if(temp!=null){
+                    if(temp.val>node.val){
+                        if(first==null){
+                            first=temp;
+                        }
+                        second=node;
+                    }
+                }
+                temp=node;
+                root=node.right;
+            }
+        }
+        int tempvalue = first.val;
+        first.val = second.val;
+        second.val = tempvalue;  
     }
 }
